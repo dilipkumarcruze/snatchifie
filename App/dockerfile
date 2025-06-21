@@ -1,0 +1,37 @@
+FROM openjdk:21-jdk-slim
+
+# Install required tools
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip aria2 ffmpeg curl maven && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install yt-dlp
+RUN pip3 install --break-system-packages --upgrade yt-dlp && \
+    which yt-dlp && yt-dlp --version
+
+# Set working directory
+WORKDIR /app
+
+# Copy Maven project files
+COPY pom.xml .
+COPY src ./src
+
+# Build the project (creates JAR file)
+RUN mvn clean install -DskipTests
+
+# Copy cookies file (ensure this file is exported from incognito session)
+RUN mkdir -p /cookies
+COPY src/main/resources/cookies/cookies.txt /cookies/cookies.txt
+
+# Create Downloads directory
+RUN mkdir -p /tmp/Downloads && chmod -R 777 /tmp
+
+# Set ENV variables
+ENV YTDLP_USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+ENV PORT=8080
+
+# Expose port
+EXPOSE 8080
+
+# Start app
+ENTRYPOINT ["java", "-jar", "target/App-0.0.1-SNAPSHOT.jar"]
