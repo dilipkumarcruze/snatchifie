@@ -98,7 +98,6 @@ public class YouTubeService {
     public CompletableFuture<File> downloadVideo(String videoId, String title, String format) {
         String downloadKey = videoId + "_" + format;
 
-        // Return if download is already in progress
         if (ongoingDownloads.containsKey(downloadKey)) {
             return ongoingDownloads.get(downloadKey);
         }
@@ -106,7 +105,6 @@ public class YouTubeService {
         CompletableFuture<File> future = CompletableFuture.supplyAsync(() -> {
             try {
                 Instant startTime = Instant.now();
-
                 File downloadsDir = new File("/tmp/Downloads");
                 if (!downloadsDir.exists() && !downloadsDir.mkdirs()) {
                     throw new IOException("Failed to create downloads dir: " + downloadsDir.getAbsolutePath());
@@ -123,17 +121,15 @@ public class YouTubeService {
 
                 File cookieFile = new File("/cookies/cookies.txt");
                 if (!cookieFile.exists()) {
-                    log.error("❌ Cookie file not found!");
+                    log.warn("❌ Cookie file not found!");
                 } else {
-                    log.info("✅ Cookie file found: " + cookieFile.getAbsolutePath());
+                    log.info("✅ Cookie file loaded.");
                 }
-
 
                 List<String> command = new ArrayList<>();
                 command.add("yt-dlp");
                 command.add("--cookies");
                 command.add("/cookies/cookies.txt");
-
 
                 if (format.equalsIgnoreCase("mp3")) {
                     command.add("-f");
@@ -152,16 +148,18 @@ public class YouTubeService {
                 command.add(outputFile.getAbsolutePath());
                 command.add("https://www.youtube.com/watch?v=" + videoId);
 
-                log.info("▶️ Running yt-dlp command: {}", String.join(" ", command));
+                log.info("▶️ yt-dlp started for videoId: {}", videoId);
 
                 ProcessBuilder pb = new ProcessBuilder(command);
                 pb.redirectErrorStream(true);
                 Process process = pb.start();
 
+                // Limit logging output to prevent Cloud Run log overflow
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                     String line;
-                    while ((line = reader.readLine()) != null) {
-                        log.info("yt-dlp: {}", line);
+                    int maxLines = 30; int count = 0;
+                    while ((line = reader.readLine()) != null && count++ < maxLines) {
+                        log.debug("yt-dlp: {}", line);
                     }
                 }
 
@@ -185,19 +183,18 @@ public class YouTubeService {
         return future;
     }
 
-
-        private JSONObject fetchJson(String urlStr) throws IOException {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    new URL(urlStr).openStream(), StandardCharsets.UTF_8))) {
-                StringBuilder response = new StringBuilder();
-                char[] buffer = new char[4096];
-                int read;
-                while ((read = reader.read(buffer)) != -1) {
-                    response.append(buffer, 0, read);
-                }
-                return new JSONObject(response.toString());
+    private JSONObject fetchJson(String urlStr) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new URL(urlStr).openStream(), StandardCharsets.UTF_8))) {
+            StringBuilder response = new StringBuilder();
+            char[] buffer = new char[4096];
+            int read;
+            while ((read = reader.read(buffer)) != -1) {
+                response.append(buffer, 0, read);
             }
+            return new JSONObject(response.toString());
         }
+    }
 
     private JSONObject fetchVideoDetails(String videoId) throws IOException {
         String url = String.format(
