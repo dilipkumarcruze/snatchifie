@@ -1,0 +1,106 @@
+:root {
+	--primary: #6f42c1;
+	--secondary: #5a379e;
+	--accent: #ff6f91;
+	--bg-light: #f8f9fa;
+	--bg-dark: #1e1e2f;
+	--text-light: #f1f1f1;
+}
+
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	font-size: 1rem;
+	transition: background-color 0.4s ease, color 0.4s ease;
+	background-color: var(--bg-light);
+	color: #333;
+}
+
+body.dark-mode {
+	background-color: var(--bg-dark);
+	color: var(--text-light);
+}
+
+.navbar {
+	background-color: var(--primary);
+	transition: background-color 0.4s ease;
+	position: sticky;
+	top: 0;
+	z-index: 1030;
+}
+
+.navbar-dark .navbar-nav .nav-link, .navbar-dark .navbar-brand {
+	color: #fff;
+}
+
+.navbar-toggler {
+	border: none;
+}
+
+.navbar-brand {
+	font-weight: bold;
+}
+
+.form-control.rounded {
+	border-radius: 50px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand:hover {
+	opacity: 0.85;
+	transform: scale(1.02);
+	transition: all 0.2s ease-in-out;
+}
+
+.btn.btn-primary {
+	border-radius: 50px;
+	transition: all 0.3s ease;
+}
+
+.btn.btn-primary:hover {
+	background-color: var(--secondary);
+}
+
+.description {
+	margin: 1rem 0;
+}
+
+#videoList li {
+	transition: all 0.3s ease;
+}
+
+#videoList li:hover {
+	transform: scale(1.02);
+	background-color: #f0e6ff;
+}
+/*
+.modal-dialog {
+	max-width: 480px;
+	transition: all 0.4s ease;
+}
+
+.modal-content {
+	border-radius: 1rem;
+}
+
+.progress {
+	height: 1rem;
+}
+
+.dark-mode .modal-content {
+	background-color: #2c2c3a;
+	color: var(--text-light);
+}
+*/
+.ads-banner {
+	background-color: #f7e6ff;
+	padding: 0.75rem;
+	margin-top: 1rem;
+	text-align: center;
+	font-size: 0.9rem;
+	border-radius: 10px;
+}
+
+.toggle-mode {
+	cursor: pointer;
+}
+

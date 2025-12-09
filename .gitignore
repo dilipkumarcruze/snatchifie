@@ -1,0 +1,20 @@
+src/main/resources/application.properties
+
+# Secrets & config
+*.properties
+*.env
+
+# Java & Maven
+target/
+*.log
+
+# IDE junk
+.settings/
+.classpath
+.project
+.vscode/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db

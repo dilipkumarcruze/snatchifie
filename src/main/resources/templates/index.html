@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TuneSnatch - Search and Download YouTube songs in MP3/MP4">
+  <meta name="theme-color" content="#6f42c1">
+  <title>Snatchifie</title>
+  <link rel="icon" href="/images/logo.png" type="image/png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1rem;
+  transition: background 0.6s ease, color 0.4s ease;
+  color: #111;
+
+  /* 🎯 Balanced Gen Z Gradient (Mid Purple + Cool Blue) */
+  background: linear-gradient(
+    -45deg,
+    #f5f7fa,   /* soft off-white */
+    #dbeafe,   /* clean sky blue */
+    #d6c4f2,   /* ✅ MID-TONE PURPLE (this is the sweet spot) */
+    #c7e8f3,   /* aqua blue */
+    #eadcf8    /* soft violet tint */
+  );
+
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+  
+  
+  
+  
+ /* ============================= */
+/* ✅ MINIMAL GLASS SEARCH BAR */
+/* ============================= */
+
+.genz-search-wrap {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.genz-search-glass {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  width: 420px;
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s ease;
+}
+
+.genz-search-glass:focus-within {
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.genz-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 1rem;
+  color: #222;
+}
+
+.dark-mode .genz-search-input {
+  color: #f1f1f1;
+}
+
+.genz-search-icon {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* ✅ SEARCH BUTTON – CLEAN & MOBILE SAFE */
+
+.genz-search-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  color: #111;
+  font-size: 1rem;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+@media (hover: hover) {
+  .genz-search-btn:hover {
+    transform: scale(1.06);
+    background: rgba(0, 0, 0, 0.18);
+  }
+}
+
+.genz-search-btn:active {
+  transform: scale(0.96);
+}
+
+/* ✅ LOADING ICON SPIN */
+.genz-search-btn.loading i {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* ============================= */
+/* ✅ MINIMAL GLASS VIDEO LIST */
+/* ============================= */
+
+.genz-video-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ✅ GLASS CARD */
+.genz-video-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.genz-video-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* ✅ SELECTED */
+.genz-video-card.active {
+  border: 1px solid #222;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* ✅ TITLE */
+.genz-video-card div {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #222;
+}
+
+/* ✅ DARK MODE */
+.dark-mode .genz-video-card {
+  background: rgba(30, 30, 47, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.dark-mode .genz-video-card div {
+  color: #f1f1f1;
+}
+
+/* ✅ DOWNLOAD BUTTON – NO STUCK MOBILE PRESS */
+
+.genz-video-card button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.08);
+  color: #111;
+  font-size: 1rem;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+@media (hover: hover) {
+  .genz-video-card button:hover {
+    transform: scale(1.08);
+    background: rgba(0, 0, 0, 0.15);
+  }
+}
+
+.genz-video-card button:active {
+  transform: scale(0.96);
+}
+
+/* ✅ LOADING TEXT */
+
+.genz-video-list .loading {
+  text-align: center;
+  font-size: 0.95rem;
+  padding: 18px;
+  color: #666;
+  animation: pulse 1.2s infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 0.6; }
+  to   { opacity: 1; }
+}
+
+/* 🧊 GLASS MODAL WRAPPER */
+.glass-modal {
+  border-radius: 20px;
+  background: rgba(20, 20, 20, 0.65);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  color: #fff;
+}
+
+/* HEADER */
+.glass-modal-header {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: transparent;
+}
+
+.glass-close {
+  filter: invert(1);
+  opacity: 0.7;
+}
+
+/* BODY */
+.glass-modal-body {
+  font-size: 0.95rem;
+}
+
+.video-title {
+  font-weight: 500;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+}
+
+/* LABEL */
+.glass-label {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* SELECT */
+.glass-select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  outline: none;
+}
+
+/* SPINNER */
+.glass-spinner {
+  color: #fff;
+  width: 22px;
+  height: 22px;
+}
+
+/* STATUS */
+.glass-status {
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 8px;
+}
+
+/* PROGRESS */
+.glass-progress-wrap {
+  height: 6px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.1);
+  margin-top: 12px;
+}
+
+.glass-progress {
+  background: #fff;
+  color: #000;
+  font-size: 0.7rem;
+}
+
+/* FOOTER */
+.glass-modal-footer {
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* DOWNLOAD BUTTON */
+.glass-download-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-weight: 500;
+  transition: 0.25s ease;
+}
+
+/* ✅ NO "PRESSED" LOOK ON MOBILE */
+.glass-download-btn:active {
+  transform: none;
+}
+
+.glass-download-btn:hover {
+  background: rgba(255,255,255,0.28);
+}
+
+/* 🧊 FLOATING iOS GLASS NAVBAR */
+
+.glass-navbar {
+  position: sticky;
+  top: 12px;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.glass-nav-inner {
+  pointer-events: auto;
+  width: 95%;
+  max-width: 1200px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 12px 20px;
+  border-radius: 22px;
+
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+
+  transition: all 0.35s ease;
+}
+
+
+/* 🔥 Soft lift when scrolling */
+.glass-navbar.scrolled .glass-nav-inner {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+/* 🎧 LOGO */
+.glass-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+/* 🏷️ TITLE PERFECTLY CENTERED */
+.glass-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: #111;
+}
+
+body.dark-mode .glass-nav-inner {
+  background: rgba(30, 30, 45, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .glass-title {
+  color: #fff;
+}
+
+  @keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 🎚 GLASS RADIO GROUP */
+.glass-radio-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.glass-radio {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+/* hide default radio */
+.glass-radio input {
+  display: none;
+}
+
+/* selected */
+.glass-radio input:checked + span {
+  font-weight: 600;
+}
+
+.glass-radio:has(input:checked) {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.35);
+}
+
+/* hover */
+.glass-radio:hover {
+  background: rgba(255,255,255,0.18);
+}
+
+  
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <nav class="glass-navbar">
+  <div class="glass-nav-inner">
+    <img src="/images/logo.png" alt="Logo" class="glass-logo" />
+    <span class="glass-title">Snatchifie</span>
+  </div>
+</nav>
+
+
+  <main class="container py-4 flex-grow-1">
+    <div class="text-center mb-4">
+      <h1 class="title-color">Search. Snatch. Jam.</h1>
+      <p class="description">🔥 Download songs for ringtones, playlists, or party vibes.</p>
+      <div class="genz-search-wrap d-flex justify-content-center align-items-center gap-2">
+  <div class="genz-search-glass">
+    <i class="fas fa-magnifying-glass genz-search-icon"></i>
+    <input 
+      type="text" 
+      id="searchQuery" 
+      class="genz-search-input" 
+      placeholder="Paste link or vibe search..." 
+      autocomplete="off"
+    >
+  </div>
+
+  <button class="genz-search-btn" id="searchBtn" onclick="searchVideos()">
+    <i class="fas fa-arrow-right"></i>
+  </button>
+</div>
+
+    <ul id="videoList" class="genz-video-list"></ul>
+
+  </main>
+
+  <div class="modal fade" id="downloadModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content glass-modal">
+
+      <div class="modal-header glass-modal-header">
+        <h5 class="modal-title" id="downloadModalLabel">Download</h5>
+        <button type="button" class="btn-close glass-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body glass-modal-body">
+
+        <p class="video-title">
+          <span id="modalVideoTitle"></span>
+        </p>
+
+        <div class="mb-3">
+  <label class="glass-label">Format</label>
+
+  <div class="glass-radio-group">
+    <label class="glass-radio">
+      <input type="radio" name="format" value="mp3" checked>
+      <span>MP3 (Audio)</span>
+    </label>
+
+    <label class="glass-radio">
+      <input type="radio" name="format" value="mp4">
+      <span>MP4 (Video)</span>
+    </label>
+  </div>
+</div>
+
+
+        <div id="loadingAnimation" class="text-center d-none">
+          <div class="spinner-border glass-spinner"></div>
+          <p class="loading-text">Downloading...</p>
+        </div>
+
+        <div class="progress d-none glass-progress-wrap" id="progressBarWrap">
+          <div id="downloadProgress" class="progress-bar glass-progress">0%</div>
+        </div>
+
+        <div id="modalStatus" class="glass-status"></div>
+
+      </div>
+
+      <div class="modal-footer glass-modal-footer">
+        <button id="downloadButton" class="glass-download-btn" onclick="startDownload()">
+          <i class="fas fa-download"></i> Download
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+  <footer class="text-center py-3 bg-light border-top mt-5">
+    <div class="container">
+      <span class="text-muted">&copy; 2025 TuneSnatch. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ✅ Inline JS Starts Here -->
+  <script>
+    console.log("JS loaded");
+
+    let selectedVideo = null;
+
+    function searchVideos() {
+      console.log("Search triggered");
+      const query = document.getElementById("searchQuery").value.trim();
+      if (!query) {
+        alert("Please enter a search term.");
+        return;
+      }
+
+      localStorage.setItem("lastSearch", query);
+      const searchBtn = document.getElementById("searchBtn");
+      searchBtn.disabled = true;
+      searchBtn.classList.add("loading");
+      searchBtn.innerHTML = '<i class="fas fa-circle-notch"></i>';
+
+
+      document.getElementById("videoList").innerHTML = "<li class='list-group-item'>Searching...</li>";
+
+      fetch(`/api/youtube/search?query=${encodeURIComponent(query)}`)
+        .then(async res => {
+          if (!res.ok) {
+            const errData = await res.json().catch(() => null);
+            throw new Error(errData?.error || "Search failed.");
+          }
+          return res.json();
+        })
+        .then(data => {
+          const list = document.getElementById("videoList");
+          list.innerHTML = "";
+
+          if (data.length === 0) {
+            list.innerHTML = "<li class='list-group-item'>No videos found.</li>";
+            return;
+          }
+
+          data.forEach((item) => {
+            const li = document.createElement("li");
+            li.className = "genz-video-card";
+
+            const titleDiv = document.createElement("div");
+            titleDiv.textContent = item.title;
+            titleDiv.classList.add("flex-grow-1", "me-3");
+            titleDiv.style.cursor = "pointer";
+
+            titleDiv.onclick = () => {
+              document.querySelectorAll("#videoList li").forEach(el => el.classList.remove("active"));
+              li.classList.add("active");
+              selectedVideo = item;
+            };
+
+            const downloadBtn = document.createElement("button");
+            downloadBtn.className = "btn btn-success btn-sm";
+            downloadBtn.innerHTML = '<i class="fas fa-download"></i>';
+            downloadBtn.onclick = () => {
+              selectedVideo = item;
+              downloadSelected();
+            };
+
+            li.appendChild(titleDiv);
+            li.appendChild(downloadBtn);
+            list.appendChild(li);
+          });
+        })
+        .catch(err => {
+          document.getElementById("videoList").innerHTML =
+            `<li class='list-group-item text-danger'>Error: ${err.message}</li>`;
+        })
+        .finally(() => {
+        	searchBtn.disabled = false;
+        	searchBtn.classList.remove("loading");
+        	searchBtn.innerHTML = '<i class="fas fa-arrow-right"></i>';
+
+        });
+    }
+
+    document.getElementById("searchQuery").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        searchVideos();
+      }
+    });
+
+    function downloadSelected() {
+      if (!selectedVideo) {
+        alert("Please select a video.");
+        return;
+      }
+
+      document.getElementById("modalVideoTitle").innerText = selectedVideo.title;
+      document.getElementById("modalStatus").innerHTML = "";
+      document.getElementById("downloadProgress").style.width = "0%";
+      document.getElementById("downloadProgress").innerText = "0%";
+
+      const modal = new bootstrap.Modal(document.getElementById("downloadModal"));
+      modal.show();
+    }
+
+    function startDownload() {
+    	  if (!selectedVideo) {
+    	    alert("Please select a video.");
+    	    return;
+    	  }
+
+    	  const format = document.querySelector('input[name="format"]:checked').value;
+    	  const downloadButton = document.getElementById("downloadButton");
+    	  const loadingAnimation = document.getElementById("loadingAnimation");
+    	  const modalStatus = document.getElementById("modalStatus");
+    	  const progressWrap = document.getElementById("progressBarWrap");
+    	  const progressBar = document.getElementById("downloadProgress");
+
+    	  // ✅ UI RESET
+    	  downloadButton.disabled = true;
+    	  loadingAnimation.classList.remove("d-none");
+    	  modalStatus.innerHTML = "";
+    	  progressWrap.classList.remove("d-none");
+    	  progressBar.style.width = "0%";
+    	  progressBar.innerText = "0%";
+
+    	  const formData = new URLSearchParams();
+    	  formData.append("videoId", selectedVideo.videoId);
+    	  formData.append("title", selectedVideo.title);
+    	  formData.append("format", format);
+
+    	  const xhr = new XMLHttpRequest();
+    	  xhr.open("POST", "/api/youtube/download", true);
+    	  xhr.responseType = "blob";
+    	  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    	  // ✅ REAL DOWNLOAD PROGRESS
+    	  xhr.onprogress = function (event) {
+    	    if (event.lengthComputable) {
+    	      const percent = Math.round((event.loaded / event.total) * 100);
+    	      progressBar.style.width = percent + "%";
+    	      progressBar.innerText = percent + "%";
+    	    } else {
+    	      progressBar.innerText = "Downloading...";
+    	    }
+    	  };
+
+    	  // ✅ WHEN DOWNLOAD COMPLETES
+    	  xhr.onload = function () {
+    	    if (xhr.status === 200) {
+    	      const blob = xhr.response;
+    	      const url = window.URL.createObjectURL(blob);
+
+    	      const a = document.createElement("a");
+    	      a.style.display = "none";
+    	      a.href = url;
+    	      a.download = `${selectedVideo.title}.${format}`;
+    	      document.body.appendChild(a);
+    	      a.click();
+
+    	      window.URL.revokeObjectURL(url);
+    	      document.body.removeChild(a);
+
+    	      progressBar.style.width = "100%";
+    	      progressBar.innerText = "100%";
+    	      modalStatus.innerHTML = `<span class="text-success">Download completed successfully!</span>`;
+    	    } else {
+    	      modalStatus.innerHTML = `<span class="text-danger">Download failed.</span>`;
+    	    }
+
+    	    downloadButton.disabled = false;
+    	    loadingAnimation.classList.add("d-none");
+    	  };
+
+    	  // ✅ ERROR HANDLING
+    	  xhr.onerror = function () {
+    	    modalStatus.innerHTML = `<span class="text-danger">Network error during download.</span>`;
+    	    downloadButton.disabled = false;
+    	    loadingAnimation.classList.add("d-none");
+    	  };
+
+    	  xhr.send(formData.toString());
+    	}
+
+
+
+    window.addEventListener("scroll", function() {
+      const logo = document.getElementById("logo");
+      if (window.scrollY > 50) {
+        logo?.classList.add("fixed");
+      } else {
+        logo?.classList.remove("fixed");
+      }
+    });
+
+    window.addEventListener("scroll", () => {
+    	  const nav = document.querySelector(".glass-navbar");
+    	  if (window.scrollY > 20) {
+    	    nav.classList.add("scrolled");
+    	  } else {
+    	    nav.classList.remove("scrolled");
+    	  }
+    	});
+
+    
+    window.addEventListener("load", () => {
+      const last = localStorage.getItem("lastSearch");
+      if (last) document.getElementById("searchQuery").value = last;
+    });
+  </script>
+  <!-- ✅ Inline JS Ends -->
+</body>
+</html>
